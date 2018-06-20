@@ -51,9 +51,9 @@ Paginate(Match(Index("lbi"), 0))
 Select("data",
     Map(
         Paginate(
-            Match(Index("lbi"), 0)
+            Match(Index("ledger_index_client_id"), 22)
         ),
-        Lambda("ref", Get(Var("ref")))
+        Lambda(["counter","ref"], Get(Var("ref")))
         )
     )
 

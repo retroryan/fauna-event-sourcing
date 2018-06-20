@@ -31,7 +31,7 @@ public class LedgerController {
 
     @RequestMapping("/all")
     public Collection<LedgerEntry> all(@RequestParam(value = "clientid", defaultValue = "0") int clientId) throws Exception {
-        System.out.println("LedgerController.all");
+        System.out.println("Ledger Controller all:" + clientId);
 
         Collection<LedgerEntry> allEntries = ledgerService.all(clientId);
         System.out.println("read allEntries = " + allEntries);

@@ -1,0 +1,10 @@
+{
+  "simulation": "fauna.EventSourceLoad",
+  "simulationId": "eventsourceload",
+  "start": 1529474816866,
+  "description": "",
+  "scenarios": ["accumulate and sum"],
+  "assertions": [
+
+  ]
+}
