@@ -75,6 +75,18 @@ public class LedgerService {
 
     }
 
+   /* void lastEntry(int clientId) throws Exception {
+
+
+        Value result = faunaClient.query(
+            Let(
+                Class(Value(LEDGER_CLASS)),
+                Obj("data", entryValue)
+            )
+        ).get();
+        System.out.println("Stored entry:\n " + result + "\n");
+    }*/
+
     @PostConstruct
     private void initLedger() throws Exception {
         /*
@@ -86,6 +98,7 @@ public class LedgerService {
             )
         ).get();
         System.out.println("Create Class for " + faunaConfig.getLedgerdb_name() + ":\n " + classResults + "\n");
+/*
 
         Value uniqueConstraintIndex = faunaClient.query(
             CreateIndex(
@@ -100,6 +113,7 @@ public class LedgerService {
             )
         ).get();
         System.out.println("Created unique constraint index for " + faunaConfig.getLedgerdb_name() + ":\n " + uniqueConstraintIndex + "\n");
+*/
 
         Value indexResults = faunaClient.query(
             CreateIndex(
@@ -108,6 +122,7 @@ public class LedgerService {
                     "source", Class(Value(LEDGER_CLASS)),
                     "terms", Arr(Obj("field", Arr(Value("data"), Value("clientId")))),
                     "values", Arr(
+                        Obj("field", Arr(Value("data"), Value("counter"))),
                         Obj("field", Arr(Value("ref"))))
                 )
             )

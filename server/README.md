@@ -18,6 +18,16 @@ CreateIndex(
 
 CreateIndex(
     {
+      name: "lbi",
+      source: Class("main_ledger"),
+      terms: [{ field: ["data", "clientId"] }],
+      values: [{ field: ["data", "counter"], reverse:true }, { field: ["ref"] }],
+      unique: true
+    })
+
+
+CreateIndex(
+    {
       name: "lbi4",
       source: Class("main_ledger"),
       terms: [{ field: ["data", "clientId"] }],
@@ -40,7 +50,7 @@ Update(Index("lbi"), { "serialized": true })
 
 Get(Ref("indexes/ledger_index_client_id"))
 Paginate(Match(Index("ledger_index_client_id"), 0))
-Paginate(Match(Index("lbi2"), 0))
+Paginate(Match(Index("lbi"), 0))
 
 Get(Match(Index("lbi"), 0))
 
@@ -143,3 +153,36 @@ CreateIndex(
       terms: [{ field: ["data", "name"] }],
       unique: true
     })
+
+
+Let(
+    {
+      refs: Select(
+        "ref",
+        Get(Match(Index("lbi2"), 0)))
+    },
+    Var("refs")
+    )
+
+Let(
+    {
+      refs:
+        Paginate(Match(Index("lbi"), 0))
+    },
+    Select("data",Var("refs"))
+    )
+
+
+Map(
+    Let(
+        {
+          refs:
+            Paginate(Match(Index("lbi"), 0))
+        },
+        Select([0,1],Var("refs"))
+    ),
+    Lambda("x",Get(Var("x")))
+    )
+
+
+Get(Select([0,1],Paginate(Match(Index("lbi"), 0))))
