@@ -7,7 +7,7 @@ object FaunaStress extends App {
 
   for (indx <- (1 to 20)) {
     println(s"indx: $indx")
-    val map = LoadProfile.feeder.next()
+    val map = LoadProfile.clientsGenerator.next()
     println(s"map: $map")
   }
 

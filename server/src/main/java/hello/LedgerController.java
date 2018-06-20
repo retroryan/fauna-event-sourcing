@@ -30,10 +30,10 @@ public class LedgerController {
     }
 
     @RequestMapping("/all")
-    public Collection<LedgerEntry> all(@RequestParam(value = "clientid", defaultValue = "0") int clientId) throws Exception {
+    public Collection<LedgerEntry> all(@RequestParam(value = "clientid", defaultValue = "0") String clientId) throws Exception {
         System.out.println("Ledger Controller all:" + clientId);
 
-        Collection<LedgerEntry> allEntries = ledgerService.all(clientId);
+        Collection<LedgerEntry> allEntries = ledgerService.all(Integer.valueOf(clientId));
         System.out.println("read allEntries = " + allEntries);
         String format = String.format(template, allEntries);
         return allEntries;

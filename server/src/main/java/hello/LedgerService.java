@@ -33,10 +33,8 @@ public class LedgerService {
     }
 
     void addEntry(LedgerEntry ledgerEntry) throws Exception {
-        System.out.println("LedgerService.addEntry");
-
         Expr entryValue = Value(ledgerEntry);
-        System.out.println("entryValue = " + entryValue);
+        //System.out.println("entryValue = " + entryValue);
 
         Value result = faunaClient.query(
             Create(
@@ -44,7 +42,6 @@ public class LedgerService {
                 Obj("data", entryValue)
             )
         ).get();
-
         System.out.println("Stored entry:\n " + result + "\n");
     }
 
@@ -61,7 +58,7 @@ public class LedgerService {
                     Paginate(
                         Match(Index(Value(INDEX_LEDGER_BY_CLIENT_ID)), Value(clientId))
                     ),
-                    Lambda(Arr(Value("counter"), Value(REF_ENTRY_ID)), Get(Var(REF_ENTRY_ID))))
+                    Lambda(Value(REF_ENTRY_ID), Get(Var(REF_ENTRY_ID))))
             )
         ).get();
 
@@ -85,24 +82,37 @@ public class LedgerService {
          */
         Value classResults = faunaClient.query(
             CreateClass(
-                Obj("name", Language.Value(LEDGER_CLASS))
+                Obj("name", Value(LEDGER_CLASS))
             )
         ).get();
         System.out.println("Create Class for " + faunaConfig.getLedgerdb_name() + ":\n " + classResults + "\n");
 
-        Value indexResults = faunaClient.query(
+        Value uniqueConstraintIndex = faunaClient.query(
             CreateIndex(
                 Obj(
-                    "name", Language.Value(INDEX_LEDGER_BY_CLIENT_ID),
-                    "source", Class(Language.Value(LEDGER_CLASS)),
+                    "name", Value("UNIQUE_ENTRY_CONSTRAINT"),
+                    "source", Class(Value(LEDGER_CLASS)),
                     "terms", Arr(Obj("field", Arr(Value("data"), Value("clientId")))),
                     "values", Arr(
-                        Obj("field", Arr(Value("data"), Value("counter"))),
-                        Obj("field", Arr(Value("ref")))),
+                        Obj("field", Arr(Value("data"), Value("counter")))),
                     "unique", Value(true)
                 )
             )
         ).get();
-        System.out.println("Create Index for " + faunaConfig.getLedgerdb_name() + ":\n " + indexResults + "\n");
+        System.out.println("Created unique constraint index for " + faunaConfig.getLedgerdb_name() + ":\n " + uniqueConstraintIndex + "\n");
+
+        Value indexResults = faunaClient.query(
+            CreateIndex(
+                Obj(
+                    "name", Value(INDEX_LEDGER_BY_CLIENT_ID),
+                    "source", Class(Value(LEDGER_CLASS)),
+                    "terms", Arr(Obj("field", Arr(Value("data"), Value("clientId")))),
+                    "values", Arr(
+                        Obj("field", Arr(Value("ref"))))
+                )
+            )
+        ).get();
+        System.out.println("Created Index for " + faunaConfig.getLedgerdb_name() + ":\n " + indexResults + "\n");
+
     }
 }

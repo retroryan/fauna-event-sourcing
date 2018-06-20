@@ -27,4 +27,4 @@ curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":
 
 echo "Reading all entries"
 
-curl http://localhost:8080/all&clientid=0
+curl http://localhost:8080/all?clientid=0
