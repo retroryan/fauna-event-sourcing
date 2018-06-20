@@ -2,8 +2,6 @@ package hello;
 
 import com.faunadb.client.FaunaClient;
 import com.faunadb.client.query.Expr;
-import com.faunadb.client.query.Language;
-import com.faunadb.client.query.Pagination;
 import com.faunadb.client.types.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +32,6 @@ public class LedgerService {
 
     void addEntry(LedgerEntry ledgerEntry) throws Exception {
         Expr entryValue = Value(ledgerEntry);
-        //System.out.println("entryValue = " + entryValue);
 
         Value result = faunaClient.query(
             Create(
@@ -58,7 +55,7 @@ public class LedgerService {
                     Paginate(
                         Match(Index(Value(INDEX_LEDGER_BY_CLIENT_ID)), Value(clientId))
                     ),
-                    Lambda(Value(REF_ENTRY_ID), Get(Var(REF_ENTRY_ID))))
+                    Lambda(Arr(Value("counter"), Value(REF_ENTRY_ID)), Get(Var(REF_ENTRY_ID))))
             )
         ).get();
 
@@ -69,23 +66,30 @@ public class LedgerService {
 
         // if you want to debug easily, convert stream to string and print out
         // String entriesString = allEntries.stream().map(LedgerEntry::toString).reduce("", String::concat);
-       // System.out.println("read entries = " + entriesString);
+        // System.out.println("read entries = " + entriesString);
 
         return allEntries;
 
     }
 
-   /* void lastEntry(int clientId) throws Exception {
-
-
+    LedgerEntry lastEntry(int clientId) throws Exception {
         Value result = faunaClient.query(
-            Let(
-                Class(Value(LEDGER_CLASS)),
-                Obj("data", entryValue)
+            Select(Value("data"),
+                Get(
+                    Select(
+                        Arr(Value(0), Value(1)),
+                        Paginate(
+                            Match(Index(Value(INDEX_LEDGER_BY_CLIENT_ID)), Value(clientId))
+                        )
+                    )
+                )
             )
         ).get();
-        System.out.println("Stored entry:\n " + result + "\n");
-    }*/
+
+        LedgerEntry ledgerEntry = result.to(LedgerEntry.class).get();
+        System.out.println("last ledger entry = " + ledgerEntry);
+        return ledgerEntry;
+    }
 
     @PostConstruct
     private void initLedger() throws Exception {
@@ -98,7 +102,7 @@ public class LedgerService {
             )
         ).get();
         System.out.println("Create Class for " + faunaConfig.getLedgerdb_name() + ":\n " + classResults + "\n");
-/*
+
 
         Value uniqueConstraintIndex = faunaClient.query(
             CreateIndex(
@@ -113,7 +117,7 @@ public class LedgerService {
             )
         ).get();
         System.out.println("Created unique constraint index for " + faunaConfig.getLedgerdb_name() + ":\n " + uniqueConstraintIndex + "\n");
-*/
+
 
         Value indexResults = faunaClient.query(
             CreateIndex(
@@ -122,7 +126,7 @@ public class LedgerService {
                     "source", Class(Value(LEDGER_CLASS)),
                     "terms", Arr(Obj("field", Arr(Value("data"), Value("clientId")))),
                     "values", Arr(
-                        Obj("field", Arr(Value("data"), Value("counter"))),
+                        Obj("field", Arr(Value("data"), Value("counter")), "reverse", Value(true)),
                         Obj("field", Arr(Value("ref"))))
                 )
             )

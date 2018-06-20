@@ -56,21 +56,33 @@ Get(Match(Index("lbi"), 0))
 
 Get(Match(Index("lbi"), 0))
 
-Paginate(Match(Index("lbi"), 0))
+Paginate(Match(Index("ledger_index_client_id"), 0))
 
-Select("data",
+
+SelectAll(["data","data"],
     Map(
         Paginate(
-            Match(Index("ledger_index_client_id"), 202)
+            Match(Index("lall"))
         ),
         Lambda("ref", Get(Var("ref")))
         )
     )
 
+
+
 Select("data",
     Map(
         Paginate(
-            Match(Index("ledger_index_client_id"), 202)
+            Match(Index("ledger_index_client_id"), 0)
+        ),
+        Lambda("ref", Get(Var("ref")))
+        )
+    )
+
+SelectAll(["data","data"],
+    Map(
+        Paginate(
+            Match(Index("ledger_index_client_id"), 0)
         ),
         Lambda(["counter","ref"], Get(Var("ref")))
         )
@@ -185,4 +197,13 @@ Map(
     )
 
 
-Get(Select([0,1],Paginate(Match(Index("lbi"), 0))))
+
+Create(Class("main_ledger"),
+  { data: {"clientId":"0","counter":"8","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"28.19"} })
+
+Get(Ref(Class("main_ledger"), "202658723083059712"))
+
+Paginate(Match(Index("UNIQUE_ENTRY_CONSTRAINT"), 0))
+Paginate(Match(Index("ledger_index_client_id"), 0))
+
+Get(Select([0,1],Paginate(Match(Index("ledger_index_client_id"), 0))))

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "Adding First Batch of Entries to client 0"
+echo
 
 curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"10","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"42.11"}'  http://localhost:8080/add
 curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"11","type":"WITHDRAWL","description":"NEW DEPOSIT", "amount":"32.10"}'  http://localhost:8080/add
@@ -12,7 +13,9 @@ curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":
 curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"17","type":"WITHDRAWL","description":"NEW DEPOSIT", "amount":"43.61"}'  http://localhost:8080/add
 curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"18","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"58.79"}'  http://localhost:8080/add
 
+echo
 echo "Adding Second Batch of Entries to client 2"
+echo
 
 curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"0","type":"WITHDRAWL","description":"NEW DEPOSIT", "amount":"92.11"}'  http://localhost:8080/add
 curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"1","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"82.10"}'  http://localhost:8080/add
@@ -24,7 +27,18 @@ curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":
 curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"7","type":"WITHDRAWL","description":"NEW DEPOSIT", "amount":"3.61"}'  http://localhost:8080/add
 curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"8","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"88.79"}'  http://localhost:8080/add
 
+echo
+echo
 
-echo "Reading all entries"
-
+echo "Reading all entries back out of ledger"
+echo
 curl http://localhost:8080/all?clientid=0
+echo
+echo
+
+echo
+echo "Reading last entry in index"
+echo
+curl http://localhost:8080/last?clientid=0
+echo
+echo
