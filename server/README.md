@@ -18,7 +18,7 @@ CreateIndex(
 
 CreateIndex(
     {
-      name: "lbi",
+      name: "UNIQUE_ENTRY_CONSTRAINT",
       source: Class("main_ledger"),
       terms: [{ field: ["data", "clientId"] }],
       values: [{ field: ["data", "counter"], reverse:true }, { field: ["ref"] }],
@@ -28,11 +28,21 @@ CreateIndex(
 
 CreateIndex(
     {
-      name: "lbi4",
+      name: "UNIQUE_ENTRY_CONSTRAINT",
       source: Class("main_ledger"),
       terms: [{ field: ["data", "clientId"] }],
-      values: [{ field: ["data", "counter"] }, { field: ["ref"] }],
-      unique: true,
+      values: [{ field: ["data", "counter"] }],
+      unique: true
+    })
+
+
+CreateIndex(
+    {
+      name: "ledger_index_client_id",
+      source: Class("main_ledger"),
+      terms: [{ field: ["data", "clientId"] }],
+      values: [{ field: ["data", "counter"], reverse:true }, { field: ["ref"] }],
+      unique: false,
       serialized: true
     })
 
@@ -48,6 +58,7 @@ CreateIndex(
 
 Update(Index("lbi"), { "serialized": true })
 
+Get(Ref("indexes/UNIQUE_ENTRY_CONSTRAINT"))
 Get(Ref("indexes/ledger_index_client_id"))
 Paginate(Match(Index("ledger_index_client_id"), 0))
 Paginate(Match(Index("lbi"), 0))
@@ -198,12 +209,39 @@ Map(
 
 
 
-Create(Class("main_ledger"),
-  { data: {"clientId":"0","counter":"8","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"28.19"} })
+Select(["data", "counter"], Create(Class("main_ledger"),
+  { data: {"clientId":0,"counter":20,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":28.19} }))
 
-Get(Ref(Class("main_ledger"), "202658723083059712"))
+Get(Ref(Class("main_ledger"), "202659774909645312"))
 
 Paginate(Match(Index("UNIQUE_ENTRY_CONSTRAINT"), 0))
 Paginate(Match(Index("ledger_index_client_id"), 0))
 
-Get(Select([0,1],Paginate(Match(Index("ledger_index_client_id"), 0))))
+SelectAll(["data","counter"],
+    Get(
+        Select([0,1],
+        Paginate(Match(Index("ledger_index_client_id"), 0)))
+    )
+)
+
+Let(
+    {latest: Add(
+        Select(["data","counter"],
+        Get(
+            Select([0,1],
+            Paginate(Match(Index("ledger_index_client_id"), 0)))
+            )
+        ),1),
+      counter: 21
+    },
+    If(
+        Equals(Var("counter"), Var("latest")),
+        ["saved",
+            Select(["data", "counter"], Create(Class("main_ledger"),
+              { data: {"clientId":0,"counter":21,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":28.19} }))
+        ],
+        ["not_saved",Var("latest")]
+        )
+)
+
+If(true, "was true", "was false"))
