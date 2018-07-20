@@ -55,13 +55,27 @@ CreateIndex(
       unique: true
     })
 
+Create(Class("ledger_class"),
+              { data: {"clientId":50,"counter":0,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":28.19} })
+Create(Class("ledger_class"),
+              { data: {"clientId":50,"counter":1,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":58.19} })
+Create(Class("ledger_class"),
+              { data: {"clientId":50,"counter":2,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":21.19} })
+Create(Class("ledger_class"),
+              { data: {"clientId":50,"counter":3,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":32.19} })
+Create(Class("ledger_class"),
+              { data: {"clientId":50,"counter":4,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":11.09} })
+
+Select(["data", "counter"], Create(Class("ledger_class"),{ data: {"clientId":0,"counter":21,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":28.19} }))
 
 Update(Index("lbi"), { "serialized": true })
 
 Get(Ref("indexes/UNIQUE_ENTRY_CONSTRAINT"))
 Get(Ref("indexes/ledger_index_client_id"))
-Paginate(Match(Index("ledger_index_client_id"), 0))
+Paginate(Match(Index("ledger_index_client_id"), 50))
 Paginate(Match(Index("lbi"), 0))
+
+Get(Match(Index("spells_index")))
 
 Get(Match(Index("lbi"), 0))
 
@@ -208,9 +222,12 @@ Map(
     )
 
 
+Create(Class("ledger_class"),
+               { data: {"clientId":52,"counter":0,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":28.19} })
+
 
 Select(["data", "counter"], Create(Class("main_ledger"),
-  { data: {"clientId":0,"counter":20,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":28.19} }))
+  { data: {"clientId":52,"counter":20,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":28.19} }))
 
 Get(Ref(Class("main_ledger"), "202659774909645312"))
 
@@ -224,24 +241,47 @@ SelectAll(["data","counter"],
     )
 )
 
+Select([0,1],
+             Paginate(Match(Index("ledger_index_client_id"), 0))
+)
+
 Let(
     {latest: Add(
-        Select(["data","counter"],
-        Get(
-            Select([0,1],
-            Paginate(Match(Index("ledger_index_client_id"), 0)))
-            )
-        ),1),
-      counter: 21
+        Select([0,0],
+            Paginate(Match(Index("ledger_index_client_id"), 0)),0
+         ),1),
+      counter: 19
     },
-    If(
-        Equals(Var("counter"), Var("latest")),
+    Var("latest")
+    )
+
+
+Let(
+    {latest: Add(
+        Select([0,0],
+            Paginate(Match(Index("ledger_index_client_id"), 0)),0
+         ),1),
+      counter: 1
+    },
+    If(Equals(Var("counter"), Var("latest")),
         ["saved",
             Select(["data", "counter"], Create(Class("main_ledger"),
-              { data: {"clientId":0,"counter":21,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":28.19} }))
+              { data: {"clientId":0,"counter":1,"type":"DEPOSIT","description":"NEW DEPOSIT", "amount":28.19} }))
         ],
         ["not_saved",Var("latest")]
         )
 )
 
+ If(Equals(20, 20),
+        ["saved", 21],
+        ["not_saved",20]
+        )
+
 If(true, "was true", "was false"))
+
+
+CreateIndex(
+    { name: "posts_by_tags_with_title",
+      source: Class("spells"),
+      terms: [{ field: ["data", "tags"] }],
+      values: [{ field: ["data", "title"] }] })

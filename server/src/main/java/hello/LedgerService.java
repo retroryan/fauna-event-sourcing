@@ -15,7 +15,7 @@ import static com.faunadb.client.query.Language.*;
 @Service
 public class LedgerService {
 
-    private String LEDGER_CLASS = "main_ledger";
+    private String LEDGER_CLASS = "main_ledger_class";
     private String INDEX_LEDGER_BY_CLIENT_ID = "ledger_index_client_id";
 
 
