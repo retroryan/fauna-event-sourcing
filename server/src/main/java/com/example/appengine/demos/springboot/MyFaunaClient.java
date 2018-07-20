@@ -1,11 +1,10 @@
-package hello;
+package com.example.appengine.demos.springboot;
 
 import com.faunadb.client.FaunaClient;
 import com.faunadb.client.query.Language;
 import com.faunadb.client.types.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -17,7 +16,7 @@ public class MyFaunaClient {
 
     private FaunaConfig faunaConfig;
 
-    private com.faunadb.client.FaunaClient client;
+    private FaunaClient client;
 
     public FaunaClient getClient() {
         return client;
@@ -40,12 +39,13 @@ public class MyFaunaClient {
          *  - remove the 'withEndpoint' line below
          *  - substitute "secret" for your authentication key's secret
          */
-        com.faunadb.client.FaunaClient adminClient = com.faunadb.client.FaunaClient.builder()
+        FaunaClient adminClient = FaunaClient.builder()
             .withEndpoint(faunaConfig.getEndpoint())
             .withSecret(faunaConfig.getSecret())
             .build();
 
         System.out.println("Successfully connected to FaunaDB as Admin\n");
+        System.out.println("adminClient: " + adminClient.toString());
 
         /*
          * Create a database

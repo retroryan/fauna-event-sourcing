@@ -1,4 +1,4 @@
-package hello;
+package com.example.appengine.demos.springboot;
 
 import com.faunadb.client.types.FaunaConstructor;
 import com.faunadb.client.types.FaunaField;
@@ -24,6 +24,9 @@ public class LedgerEntry {
         this.type = type;
         this.description = description;
         this.amount = amount;
+    }
+
+    public LedgerEntry() {
     }
 
     public int getClientId() {

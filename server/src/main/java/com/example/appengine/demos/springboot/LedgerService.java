@@ -1,16 +1,17 @@
-package hello;
+package com.example.appengine.demos.springboot;
 
 import com.faunadb.client.FaunaClient;
 import com.faunadb.client.query.Expr;
+import com.faunadb.client.query.Language;
 import com.faunadb.client.types.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-
 import java.util.Collection;
 
 import static com.faunadb.client.query.Language.*;
+import static com.faunadb.client.query.Language.Class;
 
 @Service
 public class LedgerService {
@@ -31,7 +32,7 @@ public class LedgerService {
     }
 
     void addEntry(LedgerEntry ledgerEntry) throws Exception {
-        Expr entryValue = Value(ledgerEntry);
+        Expr entryValue = Language.Value(ledgerEntry);
 
         Value result = faunaClient.query(
             Create(

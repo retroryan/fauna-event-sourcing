@@ -1,4 +1,4 @@
-package hello;
+package com.example.appengine.demos.springboot;
 
 public class Greeting {
 

@@ -1,18 +1,19 @@
-package hello;
-
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicLong;
+package com.example.appengine.demos.springboot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicLong;
+
 @RestController
 public class LedgerController {
 
     private static final String template = "Hello, %s!";
     private final AtomicLong counter = new AtomicLong();
+
     private LedgerService ledgerService;
 
     @Autowired
@@ -20,9 +21,10 @@ public class LedgerController {
         this.ledgerService = ledgerService;
     }
 
+
     @RequestMapping("/")
     public String index() {
-        return "HELLO WORLD";
+        return "NEW HELLO WORLD";
     }
 
     @RequestMapping("/greeting")
