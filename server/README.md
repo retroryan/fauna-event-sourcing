@@ -3,9 +3,20 @@
 
 mvn clean spring-boot:run
 
-curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"12","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"5.11"}'  http://localhost:8080/add
+mvnw -q spring-boot:run -Dserver.port=8081
+
+
+curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"14","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"5.11"}'  http://localhost:8080/add
 
 curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"13","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"74.11"}'  http://localhost:8080/add
+
+
+curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"14","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"5.11"}'  https://precise-window-210817.appspot.com/add
+
+curl -XPOST -H "content-type: application/json"   -d '{"clientId":"0","counter":"13","type":"DEPOSIT","description":"NEW DEPOSIT", "amount":"74.11"}'  https://precise-window-210817.appspot.com/add
+
+
+gcloud components install app-engine-java
 
 
 Get(Ref("classes/main_ledger/202584645080973824"))

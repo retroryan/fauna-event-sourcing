@@ -20,7 +20,10 @@ public class LedgerController {
         this.ledgerService = ledgerService;
     }
 
-
+    @RequestMapping("/")
+    public String index() {
+        return "HELLO WORLD";
+    }
 
     @RequestMapping("/greeting")
     public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
